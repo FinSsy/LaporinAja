@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="id" class=""> <!-- Kelas 'dark' akan ditambahkan di sini oleh JS -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaporinAja! - Platform Pengaduan Infrastruktur Warga</title>
+    <meta name="description" content="LaporinAja! adalah platform online untuk melaporkan masalah infrastruktur seperti jalan rusak, lampu mati, dan sampah kepada pemerintah setempat.">
+    
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts (Inter adalah font default Tailwind, sangat profesional) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons (Masih kita gunakan) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- AOS (Animate On Scroll) Library CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Konfigurasi Tailwind -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Mengaktifkan mode gelap berdasarkan class 'dark'
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'], // Menjadikan Inter sebagai font utama
+                    },
+                    colors: {
+                        // Menyesuaikan palet warna utama agar konsisten dengan brand Anda
+                        primary: {
+                            '50': '#fff7ed',
+                            '100': '#ffedd5',
+                            '200': '#fed7aa',
+                            '300': '#fdba74',
+                            '400': '#fb923c',
+                            '500': '#f97316', // Oranye utama
+                            '600': '#ea580c',
+                            '700': '#c2410c',
+                            '800': '#9a3412',
+                            '900': '#7c2d12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Skrip Inisialisasi Mode Gelap -->
+    <!-- Ini harus ada di <head> untuk mencegah layar berkedip (FOUC) -->
+    <script>
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <style>
+        /* CSS Tambahan untuk smooth scroll dan snap scrolling */
+        html {
+            scroll-behavior: smooth;
+            /* Perbaikan untuk sticky header agar tidak menutupi anchor link */
+            scroll-padding-top: 80px; 
+        }
+
+        /* CSS-only Testimonial Slider */
+        .testimonial-wrapper {
+            -ms-overflow-style: none; /* IE dan Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        .testimonial-wrapper::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        /* Tambahan untuk cursor grabbing saat slider di-drag */
+        .testimonial-wrapper.active {
+            cursor: grabbing;
+            cursor: -webkit-grabbing;
+            user-select: none;
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 font-sans transition-colors duration-300">
+    
+    <!-- Header/Navbar Section -->
+    <header class="sticky top-0 z-50 w-full bg-white/90 dark:bg-gray-900/80 backdrop-blur-sm shadow-md dark:shadow-gray-800">
+        <nav class="container mx-auto max-w-6xl px-4 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="text-2xl font-bold text-gray-900 dark:text-white">
+                Laporin<span class="text-primary-600">Aja!</span>
+            </a>
+            
+            <!-- Menu Desktop -->
+            <div class="hidden md:flex items-center space-x-6">
+                <a href="#hero" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 font-medium transition-colors">Beranda</a>
+                <a href="#how-it-works" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 font-medium transition-colors">Cara Kerja</a>
+                <a href="#tentang-kami" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 font-medium transition-colors">Tentang</a>
+                <a href="#fitur" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 font-medium transition-colors">Fitur</a>
+                <a href="#testimoni" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 font-medium transition-colors">Testimoni</a>
+                <a href="#faq" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-500 font-medium transition-colors">FAQ</a>
+                <a href="#" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-5 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105">
+                    Login
+                </a>
+                
+                <!-- Toggle Switch Desktop (BARU) -->
+                <label for="themeToggleDesktop" class="flex items-center cursor-pointer ml-4">
+                    <i class="fas fa-sun text-lg text-primary-500 toggle-icon-sun"></i>
+                    <div class="relative mx-2">
+                        <input type="checkbox" id="themeToggleDesktop" class="sr-only theme-toggle-checkbox">
+                        <div class="block bg-gray-300 dark:bg-gray-700 w-12 h-6 rounded-full"></div>
+                        <!-- Dot -->
+                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-300 ease-in-out transform dark:translate-x-6"></div>
+                    </div>
+                    <i class="fas fa-moon text-lg text-gray-400 dark:text-primary-500 toggle-icon-moon"></i>
+                </label>
+            </div>
+
+            <!-- Tombol Dark Mode & Burger Menu (Mobile) -->
+            <div class="flex items-center space-x-2 md:hidden">
+                <!-- Tombol Dark Mode (Diganti menjadi Toggle Switch) -->
+                <label for="themeToggleMobile" class="flex items-center cursor-pointer">
+                    <i class="fas fa-sun text-lg text-primary-500 toggle-icon-sun"></i>
+                    <div class="relative mx-2">
+                        <input type="checkbox" id="themeToggleMobile" class="sr-only theme-toggle-checkbox">
+                        <div class="block bg-gray-300 dark:bg-gray-700 w-12 h-6 rounded-full"></div>
+                        <!-- Dot -->
+                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-300 ease-in-out transform dark:translate-x-6"></div>
+                    </div>
+                    <i class="fas fa-moon text-lg text-gray-400 dark:text-primary-500 toggle-icon-moon"></i>
+                </label>
+                
+                <!-- Tombol Burger Menu -->
+                <button id="burgerBtn" class="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden" aria-label="Toggle Menu">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Menu Mobile (Dropdown) -->
+        <div id="mobileMenu" class="hidden md:hidden absolute top-full left-0 right-0 bg-white dark:bg-gray-800 shadow-lg border-t border-gray-200 dark:border-gray-700 p-4 z-40">
+            <a href="#hero" class="block py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">Beranda</a>
+            <a href="#how-it-works" class="block py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">Cara Kerja</a>
+            <a href="#tentang-kami" class="block py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">Tentang</a>
+            <a href="#fitur" class="block py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">Fitur</a>
+            <a href="#testimoni" class="block py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">Testimoni</a>
+            <a href="#faq" class="block py-2 px-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 font-medium">FAQ</a>
+            <a href="#" class="block w-full text-center mt-2 bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-5 rounded-lg shadow-md transition-all">
+                Login
+            </a>
+            <!-- Tombol Dark Mode (terlihat di mobile menu) -->
+            <!-- (DIHAPUS - karena sudah ada di header mobile) -->
+            <!-- 
+            <button id="themeToggleBtnMobile" class="w-full mt-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center space-x-2" aria-label="Toggle Dark Mode">
+                <i class="fas fa-sun text-lg"></i>
+                <span>Ganti Mode</span>
+                <i class="fas fa-moon text-lg"></i>
+            </button>
+            -->
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+
+        <!-- Hero Section -->
+        <section id="hero" class="relative">
+            <!-- Background Image -->
+            <div class="absolute inset-0">
+                <img src="https://images.unsplash.com/photo-1724243040324-aa945e452d8b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1600" 
+                     alt="Latar belakang pemandangan kota" 
+                     class="w-full h-full object-cover">
+                <!-- Overlay Gelap -->
+                <div class="absolute inset-0 bg-black/60"></div>
+            </div>
+            
+            <!-- Konten Hero -->
+            <div class="relative z-10 container mx-auto max-w-6xl px-4 py-28 md:py-40 text-center text-white">
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight" data-aos="fade-up" data-aos-delay="100">
+                    Wujudkan Lingkungan Impian Anda.
+                </h1>
+                <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-primary-400 mt-2" data-aos="fade-up" data-aos-delay="200">
+                    Laporkan, Kami Bertindak!
+                </h2>
+                <p class="mt-6 text-lg md:text-xl max-w-2xl mx-auto text-gray-200" data-aos="fade-up" data-aos-delay="300">
+                    Setiap laporan Anda adalah langkah nyata menuju perubahan. Mari bersama membangun kota yang lebih baik.
+                </p>
+                <a href="#lapor" class="mt-10 inline-block bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg py-3 px-8 rounded-lg shadow-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl" data-aos="fade-up" data-aos-delay="400">
+                    Buat Laporan Sekarang
+                </a>
+            </div>
+        </section>
+
+        <!-- Cara Kerja Section -->
+        <section id="how-it-works" class="py-20 bg-gray-50 dark:bg-gray-800">
+            <div class="container mx-auto max-w-6xl px-4 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white" data-aos="fade-up">
+                    Bagaimana Cara Kerjanya?
+                </h2>
+                <p class="mt-4 text-lg max-w-xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                    Hanya butuh tiga langkah mudah untuk membuat perubahan.
+                </p>
+                <div class="grid md:grid-cols-3 gap-8 md:gap-12 mt-16">
+                    <!-- Step 1 -->
+                    <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center justify-center w-20 h-20 bg-primary-100 dark:bg-primary-900 rounded-full shadow-lg">
+                            <i class="fas fa-file-pen text-4xl text-primary-600 dark:text-primary-400"></i>
+                        </div>
+                        <h3 class="mt-6 text-2xl font-semibold text-gray-900 dark:text-white">1. Buat Laporan</h3>
+                        <p class="mt-2 text-base">Isi formulir dengan detail masalah dan lampirkan foto jika perlu.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex items-center justify-center w-20 h-20 bg-primary-100 dark:bg-primary-900 rounded-full shadow-lg">
+                            <i class="fas fa-server text-4xl text-primary-600 dark:text-primary-400"></i>
+                        </div>
+                        <h3 class="mt-6 text-2xl font-semibold text-gray-900 dark:text-white">2. Kami Proses</h3>
+                        <p class="mt-2 text-base">Laporan Anda diverifikasi dan diteruskan ke dinas terkait.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="400">
+                        <div class="flex items-center justify-center w-20 h-20 bg-primary-100 dark:bg-primary-900 rounded-full shadow-lg">
+                            <i class="fas fa-check-double text-4xl text-primary-600 dark:text-primary-400"></i>
+                        </div>
+                        <h3 class="mt-6 text-2xl font-semibold text-gray-900 dark:text-white">3. Masalah Selesai</h3>
+                        <p class="mt-2 text-base">Pantau status laporan Anda hingga masalah terselesaikan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tentang Kami Section -->
+        <section id="tentang-kami" class="py-20">
+            <div class="container mx-auto max-w-6xl px-4">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="about-image" data-aos="fade-right">
+                        <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=800&auto=format&fit=crop" 
+                             alt="Tim LaporinAja! berdiskusi"
+                             class="w-full rounded-xl shadow-2xl object-cover aspect-video">
+                    </div>
+                    <div class="about-text" data-aos="fade-left" data-aos-delay="100">
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6">
+                            Menjadi Jembatan Aspirasi Warga
+                        </h2>
+                        <p class="text-lg mb-4">
+                            LaporinAja! lahir dari keyakinan bahwa setiap warga berhak hidup di lingkungan yang aman, nyaman, dan terawat. Kami hadir sebagai platform digital yang menjembatani komunikasi antara masyarakat dan pemerintah.
+                        </p>
+                        <p class="mb-4">
+                            Visi kami adalah menciptakan ekosistem perkotaan yang partisipatif, di mana teknologi menjadi alat untuk mempercepat perubahan positif dan membangun kepercayaan antara warga dengan aparat pemerintah.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Manfaat/Fitur (Digabung & Didesain Ulang) -->
+        <section id="fitur" class="py-20 bg-gray-50 dark:bg-gray-800">
+            <div class="container mx-auto max-w-6xl px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                        Fitur & Manfaat Unggulan
+                    </h2>
+                    <p class="mt-4 text-lg max-w-xl mx-auto">
+                        Alat yang kami sediakan untuk membuat pelaporan menjadi lebih efektif.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Fitur 1 -->
+                    <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-600 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flex items-center justify-center w-14 h-14 bg-primary-100 dark:bg-primary-900 rounded-full mb-5">
+                            <i class="fas fa-list-check text-2xl text-primary-600 dark:text-primary-400"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Pelaporan Terkategori</h3>
+                        <p class="text-base">Pilih kategori laporan seperti jalan rusak atau sampah untuk penanganan yang lebih cepat.</p>
+                    </div>
+                    <!-- Fitur 2 -->
+                    <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-600 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flex items-center justify-center w-14 h-14 bg-primary-100 dark:bg-primary-900 rounded-full mb-5">
+                            <i class="fas fa-camera-retro text-2xl text-primary-600 dark:text-primary-400"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Unggah Bukti Foto</h3>
+                        <p class="text-base">Sertakan bukti foto untuk memperkuat laporan Anda dan memudahkan verifikasi lapangan.</p>
+                    </div>
+                    <!-- Fitur 3 -->
+                    <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg border border-gray-100 dark:border-gray-600 transform hover:-translate-y-2 hover:shadow-xl transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+                        <div class="flex items-center justify-center w-14 h-14 bg-primary-100 dark:bg-primary-900 rounded-full mb-5">
+                            <i class="fas fa-eye text-2xl text-primary-600 dark:text-primary-400"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Pantau Status Laporan</h3>
+                        <p class="text-base">Pantau status setiap laporan Anda dan lihat perkembangannya secara transparan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Statistik Section -->
+        <section id="stats" class="py-20 bg-gray-800 dark:bg-gray-950 text-white">
+            <div class="container mx-auto max-w-6xl px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white">
+                        Dampak yang Telah Kami Ciptakan
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div class="stat-item p-6 bg-gray-700/50 dark:bg-gray-900 rounded-xl" data-aos="fade-up" data-aos-delay="100">
+                        <i class="fas fa-clipboard-check text-5xl text-primary-400 mb-4"></i>
+                        <h3 class="text-5xl font-bold text-white">1,200+</h3>
+                        <p class="text-lg text-gray-300 mt-2">Laporan Terselesaikan</p>
+                    </div>
+                    <div class="stat-item p-6 bg-gray-700/50 dark:bg-gray-900 rounded-xl" data-aos="fade-up" data-aos-delay="200">
+                        <i class="fas fa-bolt-lightning text-5xl text-primary-400 mb-4"></i>
+                        <h3 class="text-5xl font-bold text-white">95%</h3>
+                        <p class="text-lg text-gray-300 mt-2">Tingkat Respon Cepat</p>
+                    </div>
+                    <div class="stat-item p-6 bg-gray-700/50 dark:bg-gray-900 rounded-xl" data-aos="fade-up" data-aos-delay="300">
+                        <i class="fas fa-map-marked-alt text-5xl text-primary-400 mb-4"></i>
+                        <h3 class="text-5xl font-bold text-white">50+</h3>
+                        <p class="text-lg text-gray-300 mt-2">Area Terlayani</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimoni Section (CSS-Only Slider) -->
+        <section id="testimoni" class="py-20 bg-gray-50 dark:bg-gray-800">
+            <div class="container mx-auto max-w-6xl px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                        Apa Kata Mereka?
+                    </h2>
+                    <p class="mt-4 text-lg max-w-xl mx-auto">
+                        Dengarkan cerita dari warga yang telah merasakan manfaat LaporinAja!
+                    </p>
+                </div>
+                <!-- CSS-only horizontal scroll container -->
+                <div class="testimonial-wrapper flex space-x-8 overflow-x-auto snap-x snap-mandatory py-4 px-2 -mx-2" data-aos="fade-up" data-aos-delay="100">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card flex-shrink-0 w-11/12 md:w-[400px] snap-start bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg border-l-4 border-primary-500">
+                        <i class="fas fa-quote-left text-2xl text-primary-400 mb-4"></i>
+                        <p class="text-lg italic">"Sangat membantu! Laporan saya tentang lampu jalan yang mati direspons dengan cepat. Terima kasih LaporinAja!"</p>
+                        <div class="flex items-center mt-6">
+                            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=80&h=80&auto=format&fit=crop" alt="Avatar Budi" class="w-14 h-14 rounded-full object-cover mr-4 border-2 border-primary-500">
+                            <div>
+                                <p class="font-semibold text-lg text-gray-900 dark:text-white">Budi Santoso</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Warga Jambi</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card flex-shrink-0 w-11/12 md:w-[400px] snap-start bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg border-l-4 border-primary-500">
+                        <i class="fas fa-quote-left text-2xl text-primary-400 mb-4"></i>
+                        <p class="text-lg italic">"Akhirnya ada platform yang peduli. Tumpukan sampah di dekat rumah saya akhirnya diangkut setelah saya lapor lewat sini."</p>
+                        <div class="flex items-center mt-6">
+                            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=80&h=80&auto=format&fit=crop" alt="Avatar Siti" class="w-14 h-14 rounded-full object-cover mr-4 border-2 border-primary-500">
+                            <div>
+                                <p class="font-semibold text-lg text-gray-900 dark:text-white">Siti Aminah</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Warga Jambi</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card flex-shrink-0 w-11/12 md:w-[400px] snap-start bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg border-l-4 border-primary-500">
+                        <i class="fas fa-quote-left text-2xl text-primary-400 mb-4"></i>
+                        <p class="text-lg italic">"Prosesnya transparan, saya bisa melacak laporan jalan berlubang dari awal sampai selesai diperbaiki. Keren!"</p>
+                        <div class="flex items-center mt-6">
+                            <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=80&h=80&auto=format&fit=crop" alt="Avatar Agus" class="w-14 h-14 rounded-full object-cover mr-4 border-2 border-primary-500">
+                            <div>
+                                <p class="font-semibold text-lg text-gray-900 dark:text-white">Agus Setiawan</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Pengguna Aktif</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonial 4 -->
+                    <div class="testimonial-card flex-shrink-0 w-11/12 md:w-[400px] snap-start bg-white dark:bg-gray-700 p-8 rounded-lg shadow-lg border-l-4 border-primary-500">
+                        <i class="fas fa-quote-left text-2xl text-primary-400 mb-4"></i>
+                        <p class="text-lg italic">"Aplikasi yang wajib dimiliki setiap warga. Sangat mudah digunakan bahkan untuk orang tua seperti saya."</p>
+                        <div class="flex items-center mt-6">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=80&h=80&auto=format&fit=crop" alt="Avatar Rina" class="w-14 h-14 rounded-full object-cover mr-4 border-2 border-primary-500">
+                            <div>
+                                <p class="font-semibold text-lg text-gray-900 dark:text-white">Rina Marlina</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Warga Senior</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- FAQ Section -->
+        <section id="faq" class="py-20">
+            <div class="container mx-auto max-w-3xl px-4">
+                <div class="text-center mb-16" data-aos="fade-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                        Pertanyaan yang Sering Diajukan
+                    </h2>
+                </div>
+                <div class="space-y-4">
+                    <!-- FAQ Item 1 -->
+                    <div class="faq-item bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700" data-aos="fade-up" data-aos-delay="100">
+                        <div class="faq-question flex justify-between items-center p-6 cursor-pointer">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Apakah platform ini gratis?</h3>
+                            <i class="faq-icon fas fa-chevron-down text-primary-600 transition-transform duration-300"></i>
+                        </div>
+                        <div class="faq-answer overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+                            <p class="p-6 pt-0 text-base">Ya, LaporinAja! sepenuhnya gratis untuk digunakan oleh seluruh masyarakat.</p>
+                        </div>
+                    </div>
+                    <!-- FAQ Item 2 -->
+                    <div class="faq-item bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700" data-aos="fade-up" data-aos-delay="200">
+                        <div class="faq-question flex justify-between items-center p-6 cursor-pointer">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Laporan apa saja yang bisa saya ajukan?</h3>
+                            <i class="faq-icon fas fa-chevron-down text-primary-600 transition-transform duration-300"></i>
+                        </div>
+                        <div class="faq-answer overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+                            <p class="p-6 pt-0 text-base">Anda dapat melaporkan berbagai masalah infrastruktur publik seperti jalan rusak, lampu penerangan jalan mati, dan tumpukan sampah liar.</p>
+                        </div>
+                    </div>
+                    <!-- FAQ Item 3 -->
+                    <div class="faq-item bg-gray-50 dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700" data-aos="fade-up" data-aos-delay="300">
+                        <div class="faq-question flex justify-between items-center p-6 cursor-pointer">
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Berapa lama laporan saya akan diproses?</h3>
+                            <i class="faq-icon fas fa-chevron-down text-primary-600 transition-transform duration-300"></i>
+                        </div>
+                        <div class="faq-answer overflow-hidden max-h-0 transition-all duration-500 ease-in-out">
+                            <p class="p-6 pt-0 text-base">Waktu proses bervariasi tergantung pada kompleksitas dan skala prioritas dari laporan. Namun, kami berkomitmen untuk meneruskan setiap laporan ke dinas terkait dalam waktu 1x24 jam.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Report Section -->
+        <section id="lapor" class="py-20 bg-gray-50 dark:bg-gray-800">
+            <div class="container mx-auto max-w-3xl px-4">
+                <div class="text-center mb-12" data-aos="fade-up">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                        Siap Membuat Perubahan?
+                    </h2>
+                    <p class="mt-4 text-lg">Laporkan masalah Anda sekarang melalui formulir di bawah ini.</p>
+                </div>
+                <form action="#" method="post" class="bg-white dark:bg-gray-700 p-8 md:p-12 rounded-xl shadow-2xl space-y-6" data-aos="fade-up" data-aos-delay="100">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Nama Pelapor:</label>
+                        <input type="text" id="name" name="user_name" placeholder="Masukkan nama lengkap Anda" required
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Email:</label>
+                        <input type="email" id="email" name="user_email" placeholder="contoh@email.com" required
+                               class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label for="report_category" class="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Kategori Laporan:</label>
+                        <select id="report_category" name="report_category" required
+                                class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                            <option value="">--Pilih Kategori--</option>
+                            <option value="jalan_rusak">Jalan Rusak</option>
+                            <option value="lampu_mati">Lampu Mati</option>
+                            <option value="sampah">Sampah Liar</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-800 dark:text-gray-200 mb-2">Detail Laporan:</label>
+                        <textarea id="message" name="user_message" rows="5" placeholder="Jelaskan detail laporan Anda selengkap mungkin (lokasi, tingkat kerusakan, dll)..." required
+                                  class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold text-lg py-3 px-8 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105">
+                        Kirim Laporan
+                    </button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-gray-900 dark:bg-gray-950 text-gray-300 pt-16 pb-8">
+        <div class="container mx-auto max-w-6xl px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Kolom 1: Tentang -->
+                <div class="footer-col md:col-span-1">
+                    <h4 class="text-xl font-bold text-white mb-4">LaporinAja!</h4>
+                    <p class="text-sm leading-relaxed">Menghubungkan warga dengan pemerintah untuk mewujudkan lingkungan yang lebih baik melalui laporan yang cepat dan transparan.</p>
+                </div>
+                
+                <!-- Kolom 2: Navigasi -->
+                <div class="footer-col">
+                    <h4 class="text-lg font-semibold text-white mb-4">Navigasi</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#tentang-kami" class="hover:text-primary-400 transition-colors">Tentang Kami</a></li>
+                        <li><a href="#fitur" class="hover:text-primary-400 transition-colors">Fitur</a></li>
+                        <li><a href="#faq" class="hover:text-primary-400 transition-colors">FAQ</a></li>
+                        <li><a href="#lapor" class="hover:text-primary-400 transition-colors">Buat Laporan</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kolom 3: Kontak -->
+                <div class="footer-col">
+                    <h4 class="text-lg font-semibold text-white mb-4">Kontak</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-start space-x-2"><i class="fas fa-map-marker-alt mt-1 text-primary-400"></i><span>Kota Jambi, Indonesia</span></li>
+                        <li class="flex items-center space-x-2"><i class="fas fa-phone text-primary-400"></i><span>+62 822 8833 6699</span></li>
+                        <li class="flex items-center space-x-2"><i class="fas fa-envelope text-primary-400"></i><span>kontak@laporinaja.id</span></li>
+                    </ul>
+                </div>
+                
+                <!-- Kolom 4: Newsletter -->
+                <div class="footer-col">
+                    <h4 class="text-lg font-semibold text-white mb-4">Tetap Terhubung</h4>
+                    <p class="text-sm mb-3">Dapatkan pembaruan terbaru dari kami.</p>
+                    <form class="newsletter-form flex space-x-2">
+                        <input type="email" placeholder="Email Anda" class="w-full px-4 py-2 rounded-lg border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-primary-500">
+                        <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Footer Bawah (Copyright & Social) -->
+            <div class="mt-12 border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center text-sm">
+                <div class="copyright mb-4 md:mb-0">
+                    &copy; 2024 LaporinAja!. All Rights Reserved.
+                </div>
+                <div class="social-links flex space-x-5">
+                    <a href="#" aria-label="Instagram" class="text-xl hover:text-primary-400 transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook" class="text-xl hover:text-primary-400 transition-colors"><i class="fab fa-facebook"></i></a>
+                    <a href="#" aria-label="Twitter" class="text-xl hover:text-primary-400 transition-colors"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS (Animate On Scroll) Library JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- JavaScript di Akhir Body -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Inisialisasi AOS ---
+            AOS.init({
+                duration: 700, // Durasi animasi
+                once: true, // Animasi hanya terjadi sekali
+                offset: 100, // Trigger animasi sedikit sebelum elemen masuk viewport
+            });
+
+            // --- Fungsionalitas Mode Gelap (Dark Mode) ---
+            const themeToggleCheckboxes = document.querySelectorAll('.theme-toggle-checkbox');
+            const allSunIcons = document.querySelectorAll('.toggle-icon-sun');
+            const allMoonIcons = document.querySelectorAll('.toggle-icon-moon');
+
+            // Fungsi untuk mengatur tema
+            const setTheme = (isDark) => {
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeToggleCheckboxes.forEach(cb => cb.checked = true);
+                    // Update ikon: Bulan jadi aktif, Matahari jadi non-aktif
+                    allSunIcons.forEach(icon => {
+                        icon.classList.remove('text-primary-500');
+                        icon.classList.add('text-gray-400');
+                    });
+                    allMoonIcons.forEach(icon => {
+                        icon.classList.remove('text-gray-400');
+                        icon.classList.add('text-primary-500');
+                    });
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    themeToggleCheckboxes.forEach(cb => cb.checked = false);
+                    // Update ikon: Matahari jadi aktif, Bulan jadi non-aktif
+                    allSunIcons.forEach(icon => {
+                        icon.classList.add('text-primary-500');
+                        icon.classList.remove('text-gray-400');
+                    });
+                    allMoonIcons.forEach(icon => {
+                        icon.classList.add('text-gray-400');
+                        icon.classList.remove('text-primary-500');
+                    });
+                }
+            };
+
+            // Event listener for all toggle switches
+            themeToggleCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    setTheme(checkbox.checked);
+                });
+            });
+
+            // Inisialisasi state saat halaman dimuat
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark' || (!currentTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                setTheme(true);
+            } else {
+                setTheme(false);
+            }
+
+
+            // --- Fungsionalitas Menu Mobile (Burger) ---
+            const burgerBtn = document.getElementById('burgerBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            
+            if (burgerBtn && mobileMenu) {
+                burgerBtn.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                    // Ubah ikon burger menjadi 'X' (close)
+                    const icon = burgerBtn.querySelector('i');
+                    if (mobileMenu.classList.contains('hidden')) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    } else {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    }
+                });
+                
+                // Tutup menu saat link di-klik (untuk navigasi di halaman yang sama)
+                mobileMenu.querySelectorAll('a[href^="#"]').forEach(link => {
+                    link.addEventListener('click', () => {
+                         mobileMenu.classList.add('hidden');
+                         const icon = burgerBtn.querySelector('i');
+                         icon.classList.remove('fa-times');
+                         icon.classList.add('fa-bars');
+                    });
+                });
+            }
+
+
+            // --- Fungsionalitas FAQ Accordion ---
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const icon = item.querySelector('.faq-icon');
+                
+                if (question && answer && icon) {
+                    question.addEventListener('click', () => {
+                        const isActive = item.classList.contains('active');
+                        
+                        // Tutup semua item lain
+                        faqItems.forEach(otherItem => {
+                            if (otherItem !== item) {
+                                otherItem.classList.remove('active');
+                                otherItem.querySelector('.faq-answer').style.maxHeight = '0px';
+                                otherItem.querySelector('.faq-icon').classList.remove('rotate-180');
+                            }
+                        });
+                        
+                        // Buka atau tutup item yang di-klik
+                        if (isActive) {
+                            item.classList.remove('active');
+                            answer.style.maxHeight = '0px';
+                            icon.classList.remove('rotate-180');
+                        } else {
+                            item.classList.add('active');
+                            // Atur max-height agar transisi berfungsi
+                            answer.style.maxHeight = answer.scrollHeight + 'px';
+                            icon.classList.add('rotate-180');
+                        }
+                    });
+                }
+            });
+
+            // --- Fungsionalitas Testimonial Slider (Drag/Swipe) ---
+            // (Mengaktifkan kembali fungsionalitas drag yang diminta)
+            const slider = document.querySelector('.testimonial-wrapper');
+            if (slider) {
+                let isDown = false;
+                let startX;
+                let scrollLeft;
+
+                slider.addEventListener('mousedown', (e) => {
+                    isDown = true;
+                    slider.classList.add('active');
+                    startX = e.pageX - slider.offsetLeft;
+                    scrollLeft = slider.scrollLeft;
+                });
+                slider.addEventListener('mouseleave', () => {
+                    isDown = false;
+                    slider.classList.remove('active');
+                });
+                slider.addEventListener('mouseup', () => {
+                    isDown = false;
+                    slider.classList.remove('active');
+                });
+                slider.addEventListener('mousemove', (e) => {
+                    if (!isDown) return;
+                    e.preventDefault();
+                    const x = e.pageX - slider.offsetLeft;
+                    const walk = (x - startX) * 2; // Multiplier * 2 agar lebih responsif
+                    slider.scrollLeft = scrollLeft - walk;
+                });
+
+                // Touch events for mobile
+                slider.addEventListener('touchstart', (e) => {
+                    isDown = true;
+                    startX = e.touches[0].pageX - slider.offsetLeft;
+                    scrollLeft = slider.scrollLeft;
+                }, { passive: true });
+                
+                slider.addEventListener('touchend', () => {
+                    isDown = false;
+                });
+
+                slider.addEventListener('touchmove', (e) => {
+                    if (!isDown) return;
+                    const x = e.touches[0].pageX - slider.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    slider.scrollLeft = scrollLeft - walk;
+                });
+            }
+            
+        });
+    </script>
+</body>
+</html>
